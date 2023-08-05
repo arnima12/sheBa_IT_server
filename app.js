@@ -59,7 +59,7 @@ async function run() {
 
     app.post('/users', async (req, res) => {
       const { fullName, phoneNumber, email, password, address } = req.body;
-
+  
       const user = {
         fullName,
         phoneNumber,
@@ -99,22 +99,22 @@ async function run() {
     app.post("/videos", upload, async (req, res) => {
       try {
         const { name, description } = req.body;
-
+    
         // Check if any video files were uploaded
         if (!req.files || !req.files['videos']) {
           console.error("No video files were uploaded");
           return res.status(400).send({ message: "No video files were uploaded" });
         }
-
+    
         const videoFiles = req.files['videos'].map((file) => file.filename);
-
+    
         // Insert the video filenames as an array under the same "name" and "description"
         const videoObject = {
           name,
           description,
           videos: videoFiles,
         };
-
+    
         // Insert the videoObject into the database
         const result = await videosCollection.insertOne(videoObject);
         console.log(result);
@@ -124,9 +124,9 @@ async function run() {
         res.status(500).json({ error: 'Failed to upload videos' });
       }
     });
-
-
-    app.get("/uploads/videos/:filename", (req, res) => {
+    
+    
+      app.get("/uploads/videos/:filename", (req, res) => {
       const { filename } = req.params;
       const filePath = path.join(__dirname, "uploads", filename);
 
@@ -138,19 +138,19 @@ async function run() {
       res.contentType("video/mp4"); // Update the content type based on your video format
       fs.createReadStream(filePath).pipe(res);
     });
+    
 
-
-
+    
     // Get single video details API
     app.get("/videos/:id", async (req, res) => {
       try {
         const id = req.params.id;
-
+    
         // Make sure the provided ID is a valid hexadecimal string
         if (!ObjectId.isValid(id)) {
           return res.status(400).json({ error: 'Invalid video ID' });
         }
-
+    
         const query = { _id: new ObjectId(id) };
         const video = await videosCollection.findOne(query);
         if (!video) {
@@ -164,7 +164,7 @@ async function run() {
         res.status(500).json({ error: 'Failed to fetch video details' });
       }
     });
-
+    
 
   } catch (err) {
     console.error('Error connecting to MongoDB:', err);
